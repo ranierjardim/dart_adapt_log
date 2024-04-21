@@ -2,6 +2,8 @@
 
 import 'package:adapt_log/adapt_log.dart';
 
+
+/// Stores the logs
 abstract class AdaptLogDataPort {
 
   Future<void> initialize(AdaptLogController adaptLogController);
