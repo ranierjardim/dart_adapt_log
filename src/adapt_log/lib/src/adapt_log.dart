@@ -31,4 +31,20 @@ class AdaptLog {
   Future<void> shutdown() async {
 
   }
+
+  static Future<AdaptLogDefaultTextInputAdapter> getTestLog() async {
+    final log = AdaptLogDefaultTextInputAdapter();
+    final consolePrinter = AdaptLogConsolePrintOutputAdapter();
+    final adaptLog = AdaptLog(
+      adaptLogInputPorts: [
+        log
+      ],
+      adaptLogOutputPorts: [
+        consolePrinter,
+      ],
+      adaptLogDataPort: null,
+    );
+    await adaptLog.initialize();
+    return log;
+  }
 }
