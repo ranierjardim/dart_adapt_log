@@ -1,50 +1,34 @@
-import 'package:adapt_log/adapt_log.dart';
+import 'adapt_log_controller.dart';
+import 'adapt_log_input.dart';
+import 'adapt_log_output.dart';
 
 class AdaptLog {
-
   bool _initialized = false;
-  final AdaptLogDataPort? adaptLogDataPort;
-  final List<AdaptLogInputPort> adaptLogInputPorts;
-  final List<AdaptLogOutputPort> adaptLogOutputPorts;
-  late final AdaptLogController adaptLogController;
+  final List<AdaptLogInput> inputs;
+  final List<AdaptLogOutput> outputs;
+  late final AdaptLogController controller;
 
-  AdaptLog({required this.adaptLogInputPorts, required this.adaptLogOutputPorts, this.adaptLogDataPort}) {
-    adaptLogController = AdaptLogController(this);
+  AdaptLog({required this.inputs, required this.outputs}) {
+    controller = AdaptLogController(this);
   }
 
   Future<void> initialize() async {
-    if(_initialized) {
-      return;
+    if (_initialized) return;
+    for (final output in outputs) {
+      await output.initialize(controller);
     }
-    if(adaptLogDataPort != null) {
-      await adaptLogDataPort!.initialize(adaptLogController);
-    }
-    for (final adapter in adaptLogOutputPorts) {
-      await adapter.initialize(adaptLogController);
-    }
-    for (final adapter in adaptLogInputPorts) {
-      await adapter.initialize(adaptLogController);
+    for (final input in inputs) {
+      await input.initialize(controller);
     }
     _initialized = true;
   }
 
   Future<void> shutdown() async {
-
-  }
-
-  static Future<AdaptLogDefaultTextInputAdapter> getTestLog() async {
-    final log = AdaptLogDefaultTextInputAdapter();
-    final consolePrinter = AdaptLogConsolePrintOutputAdapter();
-    final adaptLog = AdaptLog(
-      adaptLogInputPorts: [
-        log
-      ],
-      adaptLogOutputPorts: [
-        consolePrinter,
-      ],
-      adaptLogDataPort: null,
-    );
-    await adaptLog.initialize();
-    return log;
+    for (final input in inputs) {
+      await input.shutdown();
+    }
+    for (final output in outputs) {
+      await output.shutdown();
+    }
   }
 }

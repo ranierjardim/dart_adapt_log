@@ -1,0 +1,3 @@
+library adapt_log_real_time_remote_log_output_adapter;
+
+export 'src/adapt_log_real_time_remote_log_output_adapter_base.dart';

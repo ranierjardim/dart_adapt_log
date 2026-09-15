@@ -1,0 +1,21 @@
+name: adapt_log_flutter_print_log_input_adapter
+description: Input adapter Flutter que intercepta print() e debugPrint() da aplicação e os redireciona como entradas de log.
+version: 1.0.0
+repository: https://github.com/ranierjardim/dart_adapt_log
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  adapt_log:
+    path: ../adapt_log/
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:

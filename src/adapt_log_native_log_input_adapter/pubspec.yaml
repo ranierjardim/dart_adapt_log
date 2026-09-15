@@ -1,0 +1,15 @@
+name: adapt_log_native_log_input_adapter
+description: Input adapter que captura erros e logs gerados pela camada nativa do SO (Android Logcat, iOS NSLog) e os traz para o ecossistema adapt_log.
+version: 1.0.0
+repository: https://github.com/ranierjardim/dart_adapt_log
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  adapt_log:
+    path: ../adapt_log/
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0

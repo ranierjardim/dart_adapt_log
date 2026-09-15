@@ -1,0 +1,23 @@
+name: adapt_log_sqlite_database_output_adapter
+description: Output adapter que persiste todos os logs recebidos em um banco SQLite local para consulta e reutilização posterior.
+version: 1.0.0
+repository: https://github.com/ranierjardim/dart_adapt_log
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  adapt_log:
+    path: ../adapt_log/
+  sqflite: ^2.3.0
+  path: ^1.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:

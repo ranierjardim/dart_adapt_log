@@ -1,0 +1,3 @@
+library adapt_log_logger_print_package_output_adapter;
+
+export 'src/adapt_log_logger_print_package_output_adapter_base.dart';

@@ -1,0 +1,23 @@
+name: adapt_log_flutter_auto_report_log_input_adapter
+description: Input adapter Flutter que captura prints do framework e dispara automaticamente um report completo toda vez que um erro é detectado.
+version: 1.0.0
+repository: https://github.com/ranierjardim/dart_adapt_log
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  adapt_log:
+    path: ../adapt_log/
+  adapt_log_report_log_input_adapter:
+    path: ../adapt_log_report_log_input_adapter/
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
