@@ -4,7 +4,7 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-%E2%9C%93-blue)](https://flutter.dev)
 
-Output adapter que persiste todos os logs recebidos em um banco de dados SQLite local, permitindo consulta, filtragem e reutilização posterior. Também serve como buffer local para o [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/).
+Output adapter que persiste os logs recebidos em um banco SQLite local, com retenção configurável, permitindo consulta e filtragem posterior. Também serve como buffer local para o [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/).
 
 ## Instalação
 
@@ -22,7 +22,7 @@ import 'package:adapt_log_sqlite_database_output_adapter/adapt_log_sqlite_databa
 import 'package:adapt_log_text_log_input_adapter/adapt_log_text_log_input_adapter.dart';
 
 final log = TextLogInputAdapter();
-final db = SqliteDatabaseOutputAdapter(dbName: 'meuapp_logs.db');
+final db = SqliteDatabaseOutputAdapter(dbName: 'meuapp_logs.db', maxEntries: 5000);
 
 final adaptLog = AdaptLog(
   inputs: [log],
@@ -43,30 +43,46 @@ final erros = await db.getLogs(level: AdaptLogLevel.error, limit: 50);
 
 | Parâmetro | Tipo | Padrão | Descrição |
 |---|---|---|---|
-| `dbName` | `String` | `adapt_log.db` | Nome do arquivo SQLite |
+| `dbName` | `String` | `adapt_log.db` | Nome do arquivo dentro de `getDatabasesPath()` |
+| `path` | `String?` | — | Caminho completo do arquivo; se informado, `dbName` é ignorado |
+| `maxEntries` | `int?` | `10000` | Máximo de entries mantidas; as mais antigas são removidas. `null` desativa |
+| `pruneInterval` | `int` | `100` | A poda roda a cada N inserções e em `initialize()` |
 
 ### Métodos de consulta
 
 ```dart
-// Retorna logs em ordem decrescente de inserção
+// Retorna logs das mais recentes para as mais antigas
 Future<List<AdaptLogEntry>> getLogs({int? limit, AdaptLogLevel? level});
+
+Future<int> count();
 
 // Remove todos os logs
 Future<void> clearLogs();
 ```
+
+`metadata` é gravada como JSON; valores não serializáveis viram `toString()`.
 
 ## Schema do banco
 
 ```sql
 CREATE TABLE logs (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  entry_id    TEXT    NOT NULL UNIQUE,
   message     TEXT    NOT NULL,
   level       TEXT    NOT NULL,
-  timestamp   TEXT    NOT NULL,
+  timestamp   TEXT    NOT NULL,   -- UTC
+  error       TEXT,
+  error_type  TEXT,
   stack_trace TEXT,
-  metadata    TEXT              -- JSON
+  metadata    TEXT               -- JSON
 );
+CREATE INDEX idx_logs_level ON logs(level);
+CREATE INDEX idx_logs_timestamp ON logs(timestamp);
 ```
+
+## Testes
+
+Em testes, use `sqflite_common_ffi` e `path: inMemoryDatabasePath` para um banco em memória sem plugin.
 
 ## Dependências
 

@@ -28,3 +28,9 @@ include: package:lints/recommended.yaml
 
 # For additional information about configuring this file, see
 # https://dart.dev/tools/analysis
+
+analyzer:
+  errors:
+    # Dependências por path entre os pacotes do monorepo até a publicação no
+    # pub.dev; `pub publish` continua bloqueando path deps.
+    invalid_dependency: ignore

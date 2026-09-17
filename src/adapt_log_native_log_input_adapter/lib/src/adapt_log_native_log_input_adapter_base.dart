@@ -1,20 +1,9 @@
 import 'package:adapt_log/adapt_log.dart';
 
-class NativeLogInputAdapter extends AdaptLogInput {
-  late AdaptLogController _controller;
-
-  @override
-  Future<void> initialize(AdaptLogController controller) async {
-    _controller = controller;
-    // TODO: Implement platform channel to receive native logs.
-    // Android: bridge to Logcat via MethodChannel/EventChannel.
-    // iOS: bridge to os_log / NSLog via MethodChannel/EventChannel.
-  }
-
-  @override
-  Future<void> shutdown() async {}
-
-  void _dispatch(String message, AdaptLogLevel level) {
-    _controller.log(AdaptLogEntry(message: message, level: level));
-  }
-}
+/// Input adapter para logs da camada nativa do SO (Android Logcat, iOS
+/// os_log/NSLog).
+///
+/// A ponte nativa (MethodChannel/EventChannel) ainda não foi implementada:
+/// hoje este adapter não emite nenhuma entry. A API pública será mantida
+/// quando a ponte for adicionada.
+class NativeLogInputAdapter extends AdaptLogInput {}

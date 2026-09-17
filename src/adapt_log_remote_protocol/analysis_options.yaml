@@ -1,0 +1,7 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  errors:
+    # Dependências por path entre os pacotes do monorepo até a publicação no
+    # pub.dev; `pub publish` continua bloqueando path deps.
+    invalid_dependency: ignore

@@ -3,9 +3,9 @@
 [![pub.dev](https://img.shields.io/pub/v/adapt_log_logger_print_package_output_adapter.svg)](https://pub.dev/packages/adapt_log_logger_print_package_output_adapter)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Output adapter que exibe logs no console com formatação rica — cores por nível, timestamp e stacktrace — usando o package [`logger`](https://pub.dev/packages/logger).
+Output adapter que exibe logs no console com formatação rica, com cores por nível, timestamp e stack trace, usando o package [`logger`](https://pub.dev/packages/logger).
 
-Indicado para uso em desenvolvimento e debug. Não persiste logs.
+Indicado para desenvolvimento e debug. Não persiste logs.
 
 ## Instalação
 
@@ -29,7 +29,6 @@ final adaptLog = AdaptLog(
   outputs: [
     LoggerPrintOutputAdapter(
       level: Level.debug, // nível mínimo exibido
-      printTime: true,
     ),
   ],
 );
@@ -45,8 +44,13 @@ await log.error('Conexão recusada', stackTrace: StackTrace.current);
 
 | Parâmetro | Tipo | Padrão | Descrição |
 |---|---|---|---|
-| `level` | `Level` | `Level.trace` | Nível mínimo a ser exibido |
-| `printTime` | `bool` | `true` | Exibe timestamp em cada linha |
+| `level` | `Level` | `Level.trace` | Nível mínimo a ser exibido (escala do package `logger`) |
+| `dateTimeFormat` | `DateTimeFormatter` | `DateTimeFormat.onlyTimeAndSinceStart` | Formato do timestamp; `DateTimeFormat.none` omite |
+| `stackTraceMethodCount` | `int` | `8` | Frames impressos do stack trace da entry |
+| `output` | `LogOutput?` | console | Destino das linhas (útil em testes, com `MemoryOutput`) |
+| `filter` | `LogFilter?` | `ProductionFilter()` | Imprime em qualquer modo de execução, respeitando `level`. O `DevelopmentFilter` do `logger` só imprime com asserts habilitados |
+
+Entries sem stack trace não imprimem frame nenhum: o stack "atual" nesse ponto só teria frames internos do pipeline.
 
 ### Mapeamento de níveis
 
@@ -62,7 +66,7 @@ await log.error('Conexão recusada', stackTrace: StackTrace.current);
 | Pacote | Papel |
 |---|---|
 | `adapt_log` | Contrato `AdaptLogOutput` |
-| `logger` | PrettyPrinter para formatação colorida no console |
+| `logger` (`^2.4.0`) | PrettyPrinter para formatação colorida no console |
 
 ## Pacotes relacionados
 

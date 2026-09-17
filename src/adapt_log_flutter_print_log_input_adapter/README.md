@@ -4,17 +4,20 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-%E2%9C%93-blue)](https://flutter.dev)
 
-Input adapter Flutter que intercepta chamadas de `print()` e `debugPrint()` da aplicação e as redireciona como entradas de log para o ecossistema `adapt_log`. Exclusivo Flutter.
+Input adapter Flutter que intercepta chamadas de `debugPrint()` e, opcionalmente, `print()` e as emite como entries de nível `debug`. Exclusivo Flutter.
 
 ## O que intercepta
 
 | Mecanismo | Captura |
 |---|---|
 | `debugPrint = ...` | Todas as chamadas a `debugPrint()` |
-| `FlutterError.onError` | Erros do framework Flutter (widgets, overflow, assertions) |
-| `ZoneSpecification(print:...)` | Chamadas a `print()` dentro da zona da aplicação _(opt-in)_ |
+| `ZoneSpecification(print: ...)` | Chamadas a `print()` dentro da zona da aplicação _(opt-in)_ |
 
-> Para erros Dart assíncronos fora da zona Flutter, use em conjunto com [`adapt_log_uncatched_flutter_exception_input_adapter`](../adapt_log_uncatched_flutter_exception_input_adapter/), que cobre `PlatformDispatcher.instance.onError`.
+- A saída original é preservada: o hook chama o `debugPrint` anterior e a zona delega ao `print` da zona pai.
+- Um `debugPrint()` dentro da zona gera **uma** entry, não duas.
+- Outputs que imprimem no console durante o despacho (como o adapter do package `logger`) não geram novas entries: o core descarta `log()` re-entrante, então não há loop.
+
+> Erros do framework e exceções não tratadas não são tratados aqui. Use [`adapt_log_uncatched_flutter_exception_input_adapter`](../adapt_log_uncatched_flutter_exception_input_adapter/).
 
 ## Instalação
 
@@ -39,11 +42,11 @@ final adaptLog = AdaptLog(
 );
 await adaptLog.initialize();
 
-// A partir daqui, todo debugPrint() e FlutterError são capturados
+// A partir daqui, todo debugPrint() é capturado
 runApp(const MyApp());
 ```
 
-## Cobertura completa de print() com zona
+## Cobertura de print() com zona
 
 Para capturar também chamadas diretas a `print()`, envolva o `runApp` em `runZoned` usando o `zoneSpecification` do adapter:
 
@@ -65,16 +68,18 @@ void main() async {
 }
 ```
 
+`AdaptLog.shutdown()` restaura o `debugPrint` anterior, a menos que outro hook tenha sido instalado por cima.
+
 ## Dependências
 
 | Pacote | Papel |
 |---|---|
 | `adapt_log` | Contrato `AdaptLogInput` |
-| `flutter` | APIs `debugPrint` e `FlutterError` |
+| `flutter` | API `debugPrint` |
 
 ## Pacotes relacionados
 
-- [`adapt_log_uncatched_flutter_exception_input_adapter`](../adapt_log_uncatched_flutter_exception_input_adapter/) — cobre `PlatformDispatcher.instance.onError`
+- [`adapt_log_uncatched_flutter_exception_input_adapter`](../adapt_log_uncatched_flutter_exception_input_adapter/) — erros do framework e exceções não tratadas
 - [`adapt_log_sqlite_database_output_adapter`](../adapt_log_sqlite_database_output_adapter/) — persiste os prints capturados
 
 ## Licença

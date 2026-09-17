@@ -9,8 +9,10 @@ environment:
 dependencies:
   adapt_log:
     path: ../adapt_log/
-  logger: ^2.0.0
+  logger: ^2.4.0
 
 dev_dependencies:
+  adapt_log_text_log_input_adapter:
+    path: ../adapt_log_text_log_input_adapter/
   lints: ^3.0.0
   test: ^1.24.0

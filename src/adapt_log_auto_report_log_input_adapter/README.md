@@ -3,7 +3,7 @@
 [![pub.dev](https://img.shields.io/pub/v/adapt_log_auto_report_log_input_adapter.svg)](https://pub.dev/packages/adapt_log_auto_report_log_input_adapter)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Input adapter que monitora o fluxo de logs e dispara automaticamente um report completo toda vez que uma entrada de nível `error` é detectada, sem necessidade de chamada manual.
+Input adapter que observa o pipeline e dispara automaticamente um report toda vez que uma entry de nível `error` é detectada, sem necessidade de chamada manual.
 
 > **Atenção:** este adapter é open source, mas depende transitivamente do módulo pago [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) para que os reports sejam transmitidos ao servidor.
 
@@ -46,26 +46,32 @@ await log.error('Falha crítica no checkout');
 
 ## Como funciona
 
-`AutoReportLogInputAdapter` sobrescreve `enrichEntry()`. A cada entry que passa pelo pipeline do `AdaptLogController`, verifica se o nível é `error` e se não é um report já emitido (flag `isReport: true`). Ao detectar um erro elegível, dispara `reportAdapter.sendReport()` de forma assíncrona sem bloquear o pipeline.
+`AutoReportLogInputAdapter` sobrescreve `enrichEntry()`. A cada entry que passa pelo pipeline, verifica se o nível é `error` e se não é um report (flag `isReport: true`). Ao detectar um erro elegível, chama `reportAdapter.sendReport()` com o contexto de `buildReportContext(entry)`.
+
+- O report entra na fila do core e chega aos outputs **depois** da entry de erro que o disparou, com `metadata.reportFor` igual ao `id` dela.
+- Se `reportAdapter` não estiver registrado em `AdaptLog.inputs`, a falha é reportada em `AdaptLog.onError` e a entry de erro segue normalmente.
+- Reports disparados enquanto outro ainda está em andamento são coalescidos (ver `ReportLogInputAdapter.sendReport`).
 
 ## API
 
 ### `AutoReportLogInputAdapter`
 
-| Parâmetro | Tipo | Descrição |
-|---|---|---|
-| `reportAdapter` | `ReportLogInputAdapter` | Instância do adapter de report já registrada em `AdaptLog.inputs` |
+| Membro | Descrição |
+|---|---|
+| `reportAdapter` | Instância de `ReportLogInputAdapter` já registrada em `AdaptLog.inputs` |
+| `buildReportContext(entry)` | Monta o contexto do report; sobrescreva para acrescentar informações. Padrão: `entry.message` |
 
 ## Dependências
 
 | Pacote | Papel |
 |---|---|
 | `adapt_log` | Contrato `AdaptLogInput` |
-| `adapt_log_report_log_input_adapter` | Composição e envio do report ao detectar erro |
+| `adapt_log_report_log_input_adapter` | Emissão do report ao detectar erro |
 
 ## Pacotes relacionados
 
 - [`adapt_log_report_log_input_adapter`](../adapt_log_report_log_input_adapter/) — usado internamente; também disponível para reports manuais
+- [`adapt_log_flutter_auto_report_log_input_adapter`](../adapt_log_flutter_auto_report_log_input_adapter/) — versão Flutter que anexa os últimos `debugPrint` ao report
 - [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) — output necessário para envio ao servidor
 
 ## Licença

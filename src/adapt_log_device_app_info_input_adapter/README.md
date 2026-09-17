@@ -4,19 +4,13 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-%E2%9C%93-blue)](https://flutter.dev)
 
-Input adapter que captura automaticamente informações do dispositivo e da aplicação e as anexa como metadados em cada `AdaptLogEntry`. Não emite logs por conta própria — apenas enriquece os logs emitidos pelos demais inputs.
+Input adapter que coleta, uma única vez em `initialize()`, informações do dispositivo e da aplicação e as anexa como metadados em cada `AdaptLogEntry`. Não emite logs por conta própria; apenas enriquece os logs emitidos pelos demais inputs.
 
 ## O que captura
 
-**Dispositivo:**
-- Fabricante e modelo
-- Sistema operacional e versão
-- SDK (Android) / versão do sistema (iOS/macOS/Windows/Linux)
+**Aplicação:** nome, versão, build number e package name.
 
-**Aplicação:**
-- Nome do app
-- Versão e build number
-- Package name
+**Dispositivo:** fabricante/modelo, sistema operacional e versão, SDK (Android). Na web, navegador e user agent.
 
 ## Instalação
 
@@ -25,6 +19,8 @@ dependencies:
   adapt_log: ^1.0.0
   adapt_log_device_app_info_input_adapter: ^1.0.0
 ```
+
+Requer Dart 3.3+ e Flutter 3.19+ (`device_info_plus` e `package_info_plus`).
 
 ## Uso
 
@@ -37,16 +33,15 @@ final log = TextLogInputAdapter();
 
 final adaptLog = AdaptLog(
   inputs: [
-    DeviceAppInfoInputAdapter(), // enriquece antes de despachar
+    DeviceAppInfoInputAdapter(),
     log,
   ],
   outputs: [/* seu output aqui */],
 );
 await adaptLog.initialize();
 
-// Todo log emitido por TextLogInputAdapter terá os metadados do device/app
+// Todo log emitido terá os metadados do device/app
 await log.info('App iniciado');
-// entry.metadata conterá: app.version, app.name, device.model, device.os, etc.
 ```
 
 ## Metadados adicionados
@@ -59,12 +54,17 @@ await log.info('App iniciado');
 | `app.packageName` | `com.exemplo.meuapp` |
 | `device.brand` | `Samsung` _(Android)_ |
 | `device.model` | `Galaxy S24` |
-| `device.os` | `Android 14` / `iOS 17.4` |
+| `device.name` | `iPhone de Ana` _(iOS)_ |
+| `device.os` | `Android 14` / `iOS 17.4` / `macOS 23.4.0` |
 | `device.sdkInt` | `34` _(Android)_ |
+| `device.browser` | `chrome` _(web)_ |
+| `device.userAgent` | `Mozilla/5.0 ...` _(web)_ |
+
+Chaves já presentes em `entry.metadata` prevalecem sobre as coletadas.
 
 ## Como funciona
 
-`DeviceAppInfoInputAdapter` sobrescreve o método `enrichEntry()` do `AdaptLogInput`. O `AdaptLogController` passa cada entry por todos os `enrichEntry()` registrados antes de despachá-la para os outputs — sem nenhum custo adicional para os demais adapters.
+`DeviceAppInfoInputAdapter` sobrescreve `enrichEntry()`. Falhas de coleta, como plugin indisponível ou plataforma sem suporte, são reportadas em `AdaptLog.onError` e o adapter segue com o que conseguiu coletar; as informações ficam disponíveis em `adapter.info`.
 
 ## Dependências
 

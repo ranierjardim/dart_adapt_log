@@ -1,5 +1,5 @@
 name: adapt_log_real_time_remote_log_output_adapter
-description: "[CLOSED SOURCE] Output adapter que transmite logs em tempo real ao adapt_log_server via WebSocket/HTTP."
+description: "[CLOSED SOURCE] Output adapter que transmite logs em tempo real ao adapt_log_server, em lotes, com buffer e reenvio."
 version: 1.0.0
 repository: https://github.com/ranierjardim/dart_adapt_log
 
@@ -9,8 +9,9 @@ environment:
 dependencies:
   adapt_log:
     path: ../adapt_log/
-  adapt_log_sqlite_database_output_adapter:
-    path: ../adapt_log_sqlite_database_output_adapter/
+  adapt_log_remote_protocol:
+    path: ../adapt_log_remote_protocol/
+  http: ^1.1.0
 
 dev_dependencies:
   lints: ^3.0.0

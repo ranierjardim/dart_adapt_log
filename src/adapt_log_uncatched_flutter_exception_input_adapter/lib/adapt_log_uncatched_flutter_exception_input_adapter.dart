@@ -5,60 +5,91 @@ import 'dart:ui';
 import 'package:adapt_log/adapt_log.dart';
 import 'package:flutter/foundation.dart';
 
-/// Captura exceções não tratadas via FlutterError.onError e
-/// PlatformDispatcher.instance.onError e as registra como entradas de erro.
+/// Captura exceções não tratadas e as registra como entries de nível `error`,
+/// com `metadata['source']` indicando a origem.
 ///
-/// Deve ser inicializado dentro de runZonedGuarded() antes de runApp():
+/// Hooks instalados em [initialize] e restaurados em [shutdown]:
+/// - `FlutterError.onError`: erros do framework (build, layout, gestos...);
+/// - `PlatformDispatcher.instance.onError`: erros assíncronos não tratados no
+///   isolate raiz (Flutter 3.3+).
+///
+/// Os handlers anteriores continuam sendo chamados depois do registro, então o
+/// comportamento padrão, como imprimir o erro no console, é preservado.
+///
+/// Não envolva a app em `runZonedGuarded` só para "cobrir" este adapter: erros
+/// capturados por essa zona nunca chegam a `PlatformDispatcher.onError`. Se a
+/// app já usa `runZonedGuarded`, encaminhe pelo handler dela:
 ///
 /// ```dart
-/// void main() {
-///   runZonedGuarded(() async {
-///     WidgetsFlutterBinding.ensureInitialized();
-///     final adapter = UncatchedFlutterExceptionInputAdapter();
-///     final adaptLog = AdaptLog(inputs: [adapter], outputs: [...]);
-///     await adaptLog.initialize();
-///     runApp(const MyApp());
-///   }, (error, stack) {
-///     // Zona capturada automaticamente pelo adapter
-///   });
-/// }
+/// runZonedGuarded(() => runApp(const MyApp()), adapter.handleUncaughtError);
 /// ```
 class UncatchedFlutterExceptionInputAdapter extends AdaptLogInput {
-  late AdaptLogController _controller;
   FlutterExceptionHandler? _originalOnError;
+  FlutterExceptionHandler? _onErrorHook;
   ErrorCallback? _originalOnPlatformError;
+  ErrorCallback? _onPlatformErrorHook;
 
   @override
   Future<void> initialize(AdaptLogController controller) async {
-    _controller = controller;
-    _originalOnError = FlutterError.onError;
-    _originalOnPlatformError = PlatformDispatcher.instance.onError;
+    await super.initialize(controller);
 
-    FlutterError.onError = (FlutterErrorDetails details) {
-      _dispatch(
-        details.exceptionAsString(),
-        details.stack,
-      );
-      _originalOnError?.call(details) ?? FlutterError.presentError(details);
+    final originalOnError = _originalOnError = FlutterError.onError;
+    FlutterError.onError = _onErrorHook = (FlutterErrorDetails details) {
+      _dispatch(details.exceptionAsString(), details.exception, details.stack, source: 'FlutterError');
+      if (originalOnError != null) {
+        originalOnError(details);
+      } else {
+        FlutterError.presentError(details);
+      }
     };
 
-    PlatformDispatcher.instance.onError = (error, stack) {
-      _dispatch(error.toString(), stack);
-      return _originalOnPlatformError?.call(error, stack) ?? false;
+    final originalOnPlatformError = _originalOnPlatformError = PlatformDispatcher.instance.onError;
+    PlatformDispatcher.instance.onError = _onPlatformErrorHook = (Object error, StackTrace stack) {
+      _dispatch(error.toString(), error, stack, source: 'PlatformDispatcher');
+      // Sem handler anterior, `false` mantém o fallback padrão da plataforma.
+      return originalOnPlatformError?.call(error, stack) ?? false;
     };
   }
 
   @override
   Future<void> shutdown() async {
-    FlutterError.onError = _originalOnError;
-    PlatformDispatcher.instance.onError = _originalOnPlatformError;
+    // Só restaura se nenhum outro hook foi instalado por cima do nosso.
+    if (identical(FlutterError.onError, _onErrorHook)) {
+      FlutterError.onError = _originalOnError;
+    }
+    if (identical(PlatformDispatcher.instance.onError, _onPlatformErrorHook)) {
+      PlatformDispatcher.instance.onError = _originalOnPlatformError;
+    }
+    _onErrorHook = null;
+    _originalOnError = null;
+    _onPlatformErrorHook = null;
+    _originalOnPlatformError = null;
+    await super.shutdown();
   }
 
-  void _dispatch(String message, StackTrace? stack) {
-    _controller.log(AdaptLogEntry(
+  /// Registra um erro não tratado vindo de fora dos hooks, por exemplo do
+  /// handler de `runZonedGuarded`. Antes de [initialize] o erro é encaminhado
+  /// a `FlutterError.reportError` para não se perder.
+  void handleUncaughtError(Object error, StackTrace stackTrace) {
+    if (!isAttached) {
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: error,
+        stack: stackTrace,
+        library: 'adapt_log',
+      ));
+      return;
+    }
+    _dispatch(error.toString(), error, stackTrace, source: 'zone');
+  }
+
+  void _dispatch(String message, Object? error, StackTrace? stack, {required String source}) {
+    if (!isAttached) return;
+    controller.log(AdaptLogEntry(
       message: message,
       level: AdaptLogLevel.error,
+      error: error,
       stackTrace: stack,
+      metadata: {'source': source},
     ));
   }
 }

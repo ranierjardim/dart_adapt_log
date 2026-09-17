@@ -3,9 +3,11 @@
 [![pub.dev](https://img.shields.io/pub/v/adapt_log_native_log_input_adapter.svg)](https://pub.dev/packages/adapt_log_native_log_input_adapter)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Input adapter que captura erros e logs gerados pela camada nativa do sistema operacional (Android Logcat, iOS NSLog/os_log) e os traz para o ecossistema `adapt_log`.
+Input adapter para logs gerados pela camada nativa do sistema operacional (Android Logcat, iOS os_log/NSLog).
 
-Não captura exceções Dart/Flutter — para isso use [`adapt_log_uncatched_flutter_exception_input_adapter`](../adapt_log_uncatched_flutter_exception_input_adapter/).
+> **Status:** a ponte nativa (`MethodChannel`/`EventChannel`) ainda não foi implementada. Hoje o adapter inicializa e encerra normalmente, mas **não emite nenhuma entry**. A API pública será mantida quando a ponte for adicionada.
+
+Não captura exceções Dart/Flutter; para isso use [`adapt_log_uncatched_flutter_exception_input_adapter`](../adapt_log_uncatched_flutter_exception_input_adapter/).
 
 ## Instalação
 
@@ -27,10 +29,6 @@ final adaptLog = AdaptLog(
 );
 await adaptLog.initialize();
 ```
-
-## Status da implementação
-
-A integração com as APIs nativas de cada plataforma (Android `Logcat` via `MethodChannel`/`EventChannel`, iOS `os_log` via `MethodChannel`) está planejada para uma versão futura. A estrutura do adapter está disponível e funcional — a ponte nativa será adicionada sem quebra de API.
 
 ## Dependências
 

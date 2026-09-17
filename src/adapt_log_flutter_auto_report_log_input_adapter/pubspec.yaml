@@ -5,13 +5,15 @@ repository: https://github.com/ranierjardim/dart_adapt_log
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
-  flutter: '>=3.0.0'
+  flutter: '>=3.3.0'
 
 dependencies:
   flutter:
     sdk: flutter
   adapt_log:
     path: ../adapt_log/
+  adapt_log_auto_report_log_input_adapter:
+    path: ../adapt_log_auto_report_log_input_adapter/
   adapt_log_report_log_input_adapter:
     path: ../adapt_log_report_log_input_adapter/
 

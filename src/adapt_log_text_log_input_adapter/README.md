@@ -27,11 +27,13 @@ final adaptLog = AdaptLog(
 );
 await adaptLog.initialize();
 
-await log.debug('Payload recebido: $payload');
+await log.debug('Payload recebido', metadata: {'bytes': payload.length});
 await log.info('Usuário autenticado');
 await log.warning('Token próximo do vencimento');
-await log.error('Falha ao conectar', stackTrace: StackTrace.current);
+await log.error('Falha ao conectar', error: e, stackTrace: st);
 ```
+
+Os métodos retornam um `Future` que completa quando todos os outputs processaram a entry. Aguardá-lo é opcional; eles nunca lançam por falha de output.
 
 ## API
 
@@ -39,10 +41,14 @@ await log.error('Falha ao conectar', stackTrace: StackTrace.current);
 
 | Método | Nível | Descrição |
 |---|---|---|
-| `debug(String message)` | `AdaptLogLevel.debug` | Informação de diagnóstico detalhado |
-| `info(String message)` | `AdaptLogLevel.info` | Evento normal do fluxo da aplicação |
-| `warning(String message, {StackTrace?})` | `AdaptLogLevel.warning` | Situação anormal mas recuperável |
-| `error(String message, {StackTrace?})` | `AdaptLogLevel.error` | Erro que requer atenção |
+| `debug(message, {metadata})` | `AdaptLogLevel.debug` | Informação de diagnóstico detalhado |
+| `info(message, {metadata})` | `AdaptLogLevel.info` | Evento normal do fluxo da aplicação |
+| `warning(message, {error, stackTrace, metadata})` | `AdaptLogLevel.warning` | Situação anormal mas recuperável |
+| `error(message, {error, stackTrace, metadata})` | `AdaptLogLevel.error` | Erro que requer atenção |
+
+`error` recebe a exceção original; ela segue para os outputs como objeto e é serializada como texto e tipo.
+
+Chamar qualquer método antes de `AdaptLog.initialize()` lança `StateError`.
 
 ## Dependências
 

@@ -3,13 +3,9 @@ import 'package:adapt_log_text_log_input_adapter/adapt_log_text_log_input_adapte
 
 class _ConsolePrint extends AdaptLogOutput {
   @override
-  Future<void> initialize(AdaptLogController controller) async {}
-  @override
   Future<void> onNewLog(AdaptLogEntry entry) async {
     print('[${entry.level.name.toUpperCase()}] ${entry.message}');
   }
-  @override
-  Future<void> shutdown() async {}
 }
 
 Future<void> main() async {
@@ -19,6 +15,8 @@ Future<void> main() async {
 
   await log.info('Usuário autenticado com sucesso');
   await log.warning('Token próximo do vencimento');
-  await log.error('Falha ao conectar ao servidor');
-  await log.debug('Payload: {userId: 42}');
+  await log.error('Falha ao conectar ao servidor', stackTrace: StackTrace.current);
+  await log.debug('Payload recebido', metadata: {'userId': 42});
+
+  await adaptLog.shutdown();
 }

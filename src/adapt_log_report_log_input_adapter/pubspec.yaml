@@ -1,5 +1,5 @@
 name: adapt_log_report_log_input_adapter
-description: Input adapter para envio de reports completos ao servidor — agrega prints, logs e contexto em um único payload.
+description: Input adapter que emite reports — entries marcadas com contexto para transmissão ao servidor pelo adapter remoto.
 version: 1.0.0
 repository: https://github.com/ranierjardim/dart_adapt_log
 
@@ -9,8 +9,6 @@ environment:
 dependencies:
   adapt_log:
     path: ../adapt_log/
-  adapt_log_text_log_input_adapter:
-    path: ../adapt_log_text_log_input_adapter/
 
 dev_dependencies:
   lints: ^3.0.0

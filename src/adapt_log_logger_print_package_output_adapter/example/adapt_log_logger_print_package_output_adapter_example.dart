@@ -13,6 +13,8 @@ Future<void> main() async {
 
   await log.info('Aplicação iniciada');
   await log.warning('Aviso de exemplo');
-  await log.error('Erro de exemplo');
+  await log.error('Erro de exemplo', stackTrace: StackTrace.current);
   await log.debug('Debug de exemplo');
+
+  await adaptLog.shutdown();
 }
