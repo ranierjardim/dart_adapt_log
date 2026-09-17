@@ -4,7 +4,7 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-%E2%9C%93-blue)](https://flutter.dev)
 
-Output adapter que persiste os logs recebidos em um banco SQLite local, com retenção configurável, permitindo consulta e filtragem posterior. Também serve como buffer local para o [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/).
+Output adapter que persiste os logs recebidos em um banco SQLite local, com retenção configurável, permitindo consulta e filtragem posterior.
 
 ## Instalação
 
@@ -95,7 +95,6 @@ Em testes, use `sqflite_common_ffi` e `path: inMemoryDatabasePath` para um banco
 ## Pacotes relacionados
 
 - [`adapt_log`](../adapt_log/) — core do ecossistema
-- [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) — usa este adapter como buffer para envio ao servidor
 - [`adapt_log_device_app_info_input_adapter`](../adapt_log_device_app_info_input_adapter/) — enriquece os metadados salvos no banco
 
 ## Licença

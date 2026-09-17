@@ -1,19 +1,3 @@
-Copyright (c) 2023-2026 Ranier Kilbert Jardim
-
-This repository contains software under two different licenses.
-
-1. Proprietary software. The contents of the following directories are
-   proprietary and are NOT licensed under the MIT License below. Each one is
-   governed exclusively by the LICENSE file inside that directory:
-
-     src/adapt_log_server/
-     src/adapt_log_real_time_remote_log_output_adapter/
-
-2. Open source software. All other contents of this repository are licensed
-   under the MIT License below.
-
---------------------------------------------------------------------------------
-
 MIT License
 
 Copyright (c) 2023 Ranier Kilbert Jardim

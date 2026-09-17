@@ -83,7 +83,7 @@ Widget que envolve a app num `RepaintBoundary` com a chave do adapter.
 
 - [`adapt_log_uncatched_flutter_exception_input_adapter`](../adapt_log_uncatched_flutter_exception_input_adapter/) — origem das entries de erro não tratadas
 - [`adapt_log_flutter_auto_report_log_input_adapter`](../adapt_log_flutter_auto_report_log_input_adapter/) — anexa os últimos `debugPrint` ao erro
-- [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) — envia tudo ao servidor
+- `adapt_log_real_time_remote_log_output_adapter` — envia tudo ao servidor
 
 ## Licença
 

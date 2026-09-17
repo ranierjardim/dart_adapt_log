@@ -5,7 +5,7 @@
 
 Input adapter para emissão de reports: entries de nível `info` marcadas com `metadata.isReport` e o contexto informado. O adapter remoto usa essa marcação para montar e transmitir o report ao servidor.
 
-> **Atenção:** este adapter é open source, mas requer o módulo pago [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) registrado como output para a transmissão ao servidor funcionar.
+> **Atenção:** este adapter é open source, mas requer o módulo pago `adapt_log_real_time_remote_log_output_adapter` registrado como output para a transmissão ao servidor funcionar.
 
 ## Instalação
 
@@ -64,7 +64,7 @@ O flag `isReport` evita loops quando usado com [`adapt_log_auto_report_log_input
 ## Pacotes relacionados
 
 - [`adapt_log_auto_report_log_input_adapter`](../adapt_log_auto_report_log_input_adapter/) — dispara reports automaticamente a cada erro
-- [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) — output necessário para envio ao servidor
+- `adapt_log_real_time_remote_log_output_adapter` — output necessário para envio ao servidor
 
 ## Licença
 

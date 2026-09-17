@@ -6,7 +6,7 @@
 
 Versão Flutter do [`adapt_log_auto_report_log_input_adapter`](../adapt_log_auto_report_log_input_adapter/): guarda as últimas linhas impressas via `debugPrint`, anexa-as a cada entry de nível `error` em `metadata['recentPrints']` e ao contexto do report disparado. É isso que o painel do `adapt_log_server` mostra como "Prints antes do erro". Exclusivo Flutter.
 
-> **Atenção:** depende transitivamente do módulo pago [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) para que os reports sejam transmitidos ao servidor.
+> **Atenção:** depende transitivamente do módulo pago `adapt_log_real_time_remote_log_output_adapter` para que os reports sejam transmitidos ao servidor.
 
 ## Instalação
 

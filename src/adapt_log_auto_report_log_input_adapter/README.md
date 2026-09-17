@@ -5,7 +5,7 @@
 
 Input adapter que observa o pipeline e dispara automaticamente um report toda vez que uma entry de nível `error` é detectada, sem necessidade de chamada manual.
 
-> **Atenção:** este adapter é open source, mas depende transitivamente do módulo pago [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) para que os reports sejam transmitidos ao servidor.
+> **Atenção:** este adapter é open source, mas depende transitivamente do módulo pago `adapt_log_real_time_remote_log_output_adapter` para que os reports sejam transmitidos ao servidor.
 
 ## Instalação
 
@@ -72,7 +72,7 @@ await log.error('Falha crítica no checkout');
 
 - [`adapt_log_report_log_input_adapter`](../adapt_log_report_log_input_adapter/) — usado internamente; também disponível para reports manuais
 - [`adapt_log_flutter_auto_report_log_input_adapter`](../adapt_log_flutter_auto_report_log_input_adapter/) — versão Flutter que anexa os últimos `debugPrint` ao report
-- [`adapt_log_real_time_remote_log_output_adapter`](../adapt_log_real_time_remote_log_output_adapter/) — output necessário para envio ao servidor
+- `adapt_log_real_time_remote_log_output_adapter` — output necessário para envio ao servidor
 
 ## Licença
 

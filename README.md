@@ -24,10 +24,12 @@ Ecossistema de logging para Dart e Flutter baseado no padrão **Ports & Adapters
 
 ### Closed Source / Pago
 
+Ficam no repositório privado `dart_adapt_log_closed_source`, disponível via assinatura.
+
 | Pacote | Tipo | Descrição |
 |---|---|---|
-| [`adapt_log_real_time_remote_log_output_adapter`](src/adapt_log_real_time_remote_log_output_adapter/) | Output | Transmite logs ao servidor em lotes, com buffer e reenvio |
-| [`adapt_log_server`](src/adapt_log_server/) | Servidor | Recebe, persiste em SQLite e serve logs; painel web embutido |
+| `adapt_log_real_time_remote_log_output_adapter` | Output | Transmite logs ao servidor em lotes, com reenvio |
+| `adapt_log_server` | Servidor | Recebe, persiste em SQLite e serve logs; painel web embutido |
 
 ## Dependências entre módulos
 
@@ -45,8 +47,8 @@ adapt_log  (core)
 ├── adapt_log_logger_print_package_output_adapter
 ├── adapt_log_sqlite_database_output_adapter                       [Flutter]
 └── adapt_log_remote_protocol
-    ├── adapt_log_real_time_remote_log_output_adapter  ← PAGO
-    └── adapt_log_server                               ← PAGO
+    ├── adapt_log_real_time_remote_log_output_adapter  ← PAGO, repositório privado
+    └── adapt_log_server                               ← PAGO, repositório privado
 ```
 
 ## Exemplo mínimo
@@ -73,7 +75,7 @@ await adaptLog.shutdown();
 
 ## Do erro ao painel
 
-No app Flutter, registre os adapters de captura e o adapter remoto (pago):
+No app Flutter, registre os adapters de captura e o adapter remoto. O adapter remoto e o servidor são pagos e ficam no repositório privado `dart_adapt_log_closed_source`.
 
 ```dart
 final log = TextLogInputAdapter();
@@ -97,7 +99,7 @@ await adaptLog.initialize();
 runApp(AdaptLogScreenshotBoundary(adapter: screenshot, child: const MyApp()));
 ```
 
-Suba o servidor e abra o painel:
+Suba o servidor, a partir do repositório privado, e abra o painel:
 
 ```sh
 cd src/adapt_log_server
@@ -143,10 +145,8 @@ src/
   adapt_log_logger_print_package_output_adapter/
   adapt_log_sqlite_database_output_adapter/
   adapt_log_remote_protocol/
-  adapt_log_real_time_remote_log_output_adapter/  # closed source
-  adapt_log_server/                               # closed source
 ```
 
 ## Licença
 
-Os pacotes open source estão sob a licença MIT. `adapt_log_real_time_remote_log_output_adapter` e `adapt_log_server` são proprietários, com todos os direitos reservados: o código está visível neste repositório, mas o uso depende de assinatura. Cada um tem o próprio LICENSE, e o [LICENSE](LICENSE) da raiz delimita o que é MIT.
+MIT, para todos os pacotes deste repositório. O adapter remoto e o servidor são proprietários e ficam no repositório privado `dart_adapt_log_closed_source`.
