@@ -1,3 +1,6 @@
+| `historyFrames` | `0` | Quadros anteriores ao erro guardados na memória. `0` desliga o histórico |
+| `historyInterval` | `2s` | De quanto em quanto tempo um quadro do histórico é capturado |
+| `historyLogLevel` | `debug` | Nível da linha de log de cada captura do histórico |
 # adapt_log_flutter_error_screenshot_input_adapter
 
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -65,6 +68,24 @@ Leituras: `capturedScreenshots`, `skippedScreenshots`, `capture()` para capturar
 ### `AdaptLogScreenshotBoundary`
 
 Widget que envolve a app num `RepaintBoundary` com a chave do adapter.
+
+## Histórico de quadros
+
+```dart
+final screenshot = FlutterErrorScreenshotInputAdapter(historyFrames: 3, historyInterval: const Duration(seconds: 2));
+```
+
+A cada `historyInterval` o adapter lê o frame atual do Flutter e o guarda na memória, sem gerar PNG; ficam os
+últimos `historyFrames`. Cada captura registra uma linha `Capturado quadro da tela - UUID <uuid>`, com o
+horário, no nível `historyLogLevel`. Quando um erro é logado, ele captura mais um quadro, gera os PNGs e emite
+uma entry de screenshot por quadro, em ordem cronológica: as do histórico (`screenshotMoment: history`) e a do
+erro (`error`). Cada entry leva `screenshotId` (o mesmo UUID da linha de log), `screenshotCapturedAt` (também
+no `timestamp` da entry), `screenshotIndex` e `screenshotCount`. O painel do adapt_log_server mostra a
+sequência no detalhe do erro.
+
+Só os frames do próprio Flutter são lidos: não é gravação de tela do sistema e não pede permissão. Com o app
+fora do primeiro plano nada é capturado. Cada quadro guardado ocupa largura × altura × 4 bytes (uns 1,3 MB
+numa tela de 390 × 844 em `pixelRatio: 1.0`).
 
 ## Limites
 

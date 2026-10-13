@@ -1,6 +1,6 @@
 name: adapt_log_flutter_error_screenshot_input_adapter
 description: Input adapter Flutter que captura a tela quando um erro é logado e a emite como entry ligada ao erro, para exibição no painel do adapt_log_server.
-version: 1.0.0
+version: 1.1.0
 repository: https://github.com/ranierjardim/dart_adapt_log
 
 environment:
